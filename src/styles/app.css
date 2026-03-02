@@ -1,0 +1,469 @@
+/* ─── AirSketch Pro – Global Styles ──────────────────────────────────────── */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+/* ─── Reset & Base ───────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background: #08090e;
+  color: #c8cdd8;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Layout Shell ───────────────────────────────────────────────────────── */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+}
+
+/* ─── Top Bar ────────────────────────────────────────────────────────────── */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 52px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.025);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 20;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #00e87b, #00b4f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #08090e;
+  font-weight: 800;
+}
+
+.topbar-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #edf0f5;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.status-badge[data-status="idle"] .status-dot {
+  background: #5a6070;
+  box-shadow: 0 0 6px rgba(90, 96, 112, 0.4);
+}
+
+.status-badge[data-status="drawing"] .status-dot {
+  background: #00e87b;
+  box-shadow: 0 0 8px rgba(0, 232, 123, 0.5);
+}
+
+.status-badge[data-status="erasing"] .status-dot {
+  background: #f97316;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
+}
+
+.status-badge[data-status="shape"] .status-dot {
+  background: #a78bfa;
+  box-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+}
+
+/* ─── Stage ──────────────────────────────────────────────────────────────── */
+
+.stage {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #05060a;
+}
+
+.stage-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  opacity: 0.9;
+}
+
+.stage-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Cursor indicator ── */
+.cursor-dot {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #00ff88;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.15s;
+  box-shadow:
+    0 0 15px rgba(0, 255, 136, 0.6),
+    0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.cursor-dot[data-hidden="true"] {
+  opacity: 0;
+}
+
+/* ─── Toolbar (Vertical, Left) ───────────────────────────────────────────── */
+
+.toolbar {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(12, 14, 22, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.toolbar-sep {
+  width: 28px;
+  height: 1px;
+  margin: 4px auto;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.tool-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #8891a5;
+  font-size: 17px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tool-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #cdd2dd;
+}
+
+.tool-btn.active {
+  background: rgba(0, 232, 123, 0.12);
+  color: #00e87b;
+  box-shadow: inset 0 0 0 1px rgba(0, 232, 123, 0.2);
+}
+
+.tool-btn.active-erase {
+  background: rgba(249, 115, 22, 0.12);
+  color: #f97316;
+  box-shadow: inset 0 0 0 1px rgba(249, 115, 22, 0.2);
+}
+
+.tool-btn.active-shape {
+  background: rgba(167, 139, 250, 0.12);
+  color: #a78bfa;
+  box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.2);
+}
+
+.tool-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Tooltip */
+.tool-btn::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: rgba(12, 14, 22, 0.92);
+  color: #cdd2dd;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
+  transform: translateY(-50%) translateX(-4px);
+}
+
+.tool-btn:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* ─── Bottom Panel ───────────────────────────────────────────────────────── */
+
+.bottom-panel {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 0 24px;
+  height: 52px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.025);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 20;
+}
+
+.panel-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #5a6070;
+  margin-right: 4px;
+}
+
+.panel-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Color swatch button */
+.color-swatch {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: none;
+  cursor: pointer;
+  padding: 2px;
+  transition:
+    border-color 0.2s,
+    transform 0.15s;
+}
+
+.color-swatch:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.color-swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 5px;
+}
+
+.color-swatch::-webkit-color-swatch {
+  border: none;
+  border-radius: 5px;
+}
+
+/* Range slider */
+.thickness-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 120px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.thickness-slider:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.thickness-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00e87b, #00b4f0);
+  box-shadow: 0 0 8px rgba(0, 232, 123, 0.4);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.thickness-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
+
+.thickness-value {
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 24px;
+  text-align: center;
+  color: #8891a5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Gesture hint overlay ───────────────────────────────────────────────── */
+
+.gesture-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(200, 205, 216, 0.55);
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+
+@keyframes pulse-draw {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 232, 123, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(0, 232, 123, 0);
+  }
+}
+
+.status-badge[data-status="drawing"] {
+  animation: pulse-draw 2s ease infinite;
+}
+
+@keyframes pulse-erase {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(249, 115, 22, 0);
+  }
+}
+
+.status-badge[data-status="erasing"] {
+  animation: pulse-erase 2s ease infinite;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .topbar {
+    padding: 0 14px;
+  }
+  .bottom-panel {
+    padding: 0 14px;
+    gap: 14px;
+  }
+  .toolbar {
+    left: 8px;
+    padding: 6px;
+  }
+  .tool-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+  .thickness-slider {
+    width: 80px;
+  }
+}

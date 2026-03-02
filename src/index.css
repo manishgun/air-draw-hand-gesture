@@ -1,0 +1,16 @@
+/* ─── Base Reset ──────────────────────────────────────────────────────────── */
+/* The main design system is in styles/app.css.                              */
+/* This file provides only the minimal browser reset and root variables.     */
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
