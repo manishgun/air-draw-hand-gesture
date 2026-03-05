@@ -51,6 +51,10 @@ export class StrokeEngine {
     return this.current !== null;
   }
 
+  getCurrent(): Stroke | null {
+    return this.current;
+  }
+
   // ── History ─────────────────────────────────────────────────────────────
 
   undo(): boolean {

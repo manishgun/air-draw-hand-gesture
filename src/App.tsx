@@ -10,7 +10,7 @@ import "./styles/app.css";
 
 // Thickness bounds
 const MIN_THICKNESS = 1;
-const MAX_THICKNESS = 20;
+const MAX_THICKNESS = 50;
 const THICKNESS_STEP = 2;
 
 export default function App() {
@@ -18,10 +18,13 @@ export default function App() {
   const [status, setStatus] = useState<GestureType>("idle");
   const [activeTool, setActiveTool] = useState<ToolId>("draw");
   const [shapeMode, setShapeMode] = useState(false);
-  const [thickness, setThickness] = useState(4);
+  const [drawThickness, setDrawThickness] = useState(4);
+  const [eraseThickness, setEraseThickness] = useState(10);
   const [color, setColor] = useState("#00e87b");
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+  const [handMode, setHandMode] = useState<"right" | "left">("right");
+  const [showVideo, setShowVideo] = useState(false);
 
   const stageRef = useRef<StageHandle>(null);
 
@@ -43,12 +46,14 @@ export default function App() {
     setShapeMode(v);
   }, []);
 
-  const handleThicknessChange = useCallback((delta: number) => {
-    setThickness((prev) => {
-      const next = prev + delta * THICKNESS_STEP;
-      return Math.max(MIN_THICKNESS, Math.min(MAX_THICKNESS, next));
-    });
-  }, []);
+  const handleThicknessChange = useCallback(
+    (v: number) => {
+      const val = Math.max(MIN_THICKNESS, Math.min(MAX_THICKNESS, v));
+      if (activeTool === "erase") setEraseThickness(val);
+      else setDrawThickness(val);
+    },
+    [activeTool],
+  );
 
   // ── Toolbar actions ─────────────────────────────────────────────────────
 
@@ -58,24 +63,35 @@ export default function App() {
   const handleRedo = useCallback(() => stageRef.current?.redo(), []);
   const handleClear = useCallback(() => stageRef.current?.clear(), []);
   const handleExport = useCallback(() => stageRef.current?.exportPNG(), []);
+  const handleToggleHandMode = useCallback(() => setHandMode((prev) => (prev === "right" ? "left" : "right")), []);
+  const handleToggleVideo = useCallback(() => setShowVideo((v) => !v), []);
 
   // ── Render ──────────────────────────────────────────────────────────────
 
   return (
     <div className="app-shell">
-      <TopBar status={status} shapeMode={shapeMode} />
+      <TopBar
+        status={status}
+        shapeMode={shapeMode}
+        handMode={handMode}
+        onToggleHandMode={handleToggleHandMode}
+        showVideo={showVideo}
+        onToggleVideo={handleToggleVideo}
+      />
 
       <div style={{ position: "relative", flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <Stage
           ref={stageRef}
           color={color}
-          thickness={thickness}
+          thickness={activeTool === "erase" ? eraseThickness : drawThickness}
           activeTool={activeTool}
           shapeMode={shapeMode}
           onStatusChange={handleStatusChange}
           onCountsChange={handleCountsChange}
           onShapeModeChange={handleShapeModeChange}
           onThicknessChange={handleThicknessChange}
+          handMode={handMode}
+          showVideo={showVideo}
         />
 
         <Toolbar
@@ -100,17 +116,17 @@ export default function App() {
         </div>
 
         <div className="panel-group">
-          <span className="panel-label">Thickness</span>
+          <span className="panel-label">Size ({activeTool})</span>
           <input
             id="thickness-slider"
             type="range"
             min={MIN_THICKNESS}
             max={MAX_THICKNESS}
-            value={thickness}
-            onChange={(e) => setThickness(Number(e.target.value))}
+            value={activeTool === "erase" ? eraseThickness : drawThickness}
+            onChange={(e) => handleThicknessChange(Number(e.target.value))}
             className="thickness-slider"
           />
-          <span className="thickness-value">{thickness}</span>
+          <span className="thickness-value">{activeTool === "erase" ? eraseThickness : drawThickness}</span>
         </div>
       </div>
     </div>
